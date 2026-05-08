@@ -48,6 +48,7 @@ available in the `docs/` folder.
 
 ## Project Structure
 
+```
 ├── docs/                    # Project brief, data models, architecture diagrams
 ├── data/raw/                # Source CSV files (see Data section below)
 ├── ingestion/               # Python ingestion scripts
@@ -57,6 +58,7 @@ available in the `docs/` folder.
 ├── analysis/eda/            # Exploratory data analysis notebooks
 ├── docker-compose.yml       # Full environment setup
 └── .env.example             # Environment variable template
+```
 
 ## Data
 
