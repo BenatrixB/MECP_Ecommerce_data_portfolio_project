@@ -1,0 +1,12 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: raw
+    tables:
+     - name: orders
+     - name: products
+     - name: order_item_refunds
+     - name: order_items 
+     - name: website_pageviews
+     - name: website_sessions
