@@ -85,4 +85,38 @@ models:
       - name: total_refund_amt
       - name: refund_count
       - name: refund_rate_pct
-      - name: net_revenue  
+      - name: net_revenue
+  - name: mart_sessions
+    columns:
+      - name: session_id
+        tests:
+          - unique
+          - not_null
+      - name: created_at
+        tests:
+          - not_null
+          - future_date_test
+      - name: user_id
+        tests:
+          - not_null
+      - name: is_repeat_session
+        tests:
+          - not_null
+          - accepted_values:
+                values: [0, 1]
+      - name: acquisition_channel
+      - name: acquisition_campaign
+      - name: device_type
+          - not_null
+      - name: order_id
+      - name: price_usd
+      - name: is_conversion
+        tests:
+          - not_null
+          - accepted_values:
+              values: [0, 1]
+      - name: session_year
+        tests:
+          - not_null
+      - name: session_month
+          - not_null

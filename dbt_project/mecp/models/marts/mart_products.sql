@@ -23,7 +23,7 @@ net_revenue            | calculated         | total_revenue - total_refund_amt
 -- int_order_items schema: order_item_id, created_at, order_id, product_id, is_primary_item, price_usd, cogs_usd
 -- int_order_item_refunds schema: order_item_refund_id, created_at, order_item_id, order_id, refund_amt_usd
 
--- IMPORTED MODEL SELECTION
+-- IMPORTED MODELS
 WITH order_items AS(
     SELECT
         *
