@@ -1,0 +1,51 @@
+version: 2
+
+models:
+  - name: mart_orders
+    columns:
+      - name: order_id
+        tests:
+          - unique
+          - not_null
+      - name: created_at
+        tests:
+          - not_null
+      - name: user_id
+        tests:
+          - not_null
+      - name: website_session_id
+        tests:
+          - not_null
+      - name: primary_product_id
+        tests:
+          - not_null
+      - name: items_purchased
+        tests:
+          - not_null
+      - name: price_usd
+        tests:
+          - not_null
+          - negative_price_test
+      - name: cogs_usd
+        tests:
+          - not_null
+          - negative_price_test
+      - name: gross_margin_usd
+        tests:
+          - not_null
+      - name: gross_margin_pct
+        tests:
+          - not_null
+      - name: refund_amt_usd
+      - name: net_revenue_usd
+        tests:
+          - not_null
+      - name: order_year
+        tests:
+          - not_null
+      - name: order_month
+        tests:
+          - not_null
+      - name: order_day_of_week
+        tests:
+          - not_null
