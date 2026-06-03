@@ -10,6 +10,7 @@ models:
       - name: created_at
         tests:
           - not_null
+          - future_date_test
       - name: website_session_id
         tests:
           - not_null
@@ -39,6 +40,7 @@ models:
       - name: created_at
         tests:
           - not_null
+          - future_date_test
       - name: order_id
         tests: 
           - not_null
@@ -65,6 +67,7 @@ models:
       - name: created_at
         tests:
           - not_null
+          - future_date_test
       - name: order_item_id
         tests:
           - not_null
@@ -84,6 +87,7 @@ models:
       - name: created_at
         tests:
           - not_null
+          - future_date_test
       - name: product_name
         tests:
           - not_null
@@ -96,6 +100,7 @@ models:
       - name: created_at
         tests:
           - not_null
+          - future_date_test
       - name: website_session_id
         tests:
           - not_null
@@ -111,6 +116,7 @@ models:
       - name: created_at
         tests:
           - not_null
+          - future_date_test
       - name: user_id
         tests:
           - not_null

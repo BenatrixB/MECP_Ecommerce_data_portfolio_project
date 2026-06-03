@@ -10,6 +10,7 @@ models:
       - name: created_at
         tests:
           - not_null
+          - future_date_test
       - name: user_id
         tests:
           - not_null
