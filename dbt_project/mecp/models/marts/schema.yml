@@ -50,3 +50,39 @@ models:
       - name: order_day_of_week
         tests:
           - not_null
+  - name: mart_products
+    tests:
+      - unique:
+          column_name: "product_id || '-' || order_year || '-' || order_month"
+    columns:
+      - name: product_id
+        tests:
+          - not_null
+      - name: product_name
+        tests:
+          - not_null 
+      - name: order_year
+        tests:
+          - not_null
+      - name: order_month
+        tests:
+          - not_null
+      - name: total_revenue
+        tests:
+          - not_null
+          - negative_price_test
+      - name: total_cogs
+        tests:
+          - not_null
+          - negative_price_test
+      - name: gross_margin_usd
+        tests:
+          - not_null
+      - name: gross_margin_pct
+        tests:
+          - not_null
+      - name: units_sold
+      - name: total_refund_amt
+      - name: refund_count
+      - name: refund_rate_pct
+      - name: net_revenue  
