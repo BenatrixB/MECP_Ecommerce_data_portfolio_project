@@ -25,9 +25,11 @@ models:
       - name: price_usd
         tests:
           - not_null
+          - negative_price_test
       - name: cogs_usd
         tests:
           - not_null
+          - negative_price_test
   - name: stg_order_items
     columns:
       - name: order_item_id
@@ -49,9 +51,11 @@ models:
       - name: price_usd
         tests: 
           - not_null
+          - negative_price_test
       - name: cogs_usd
         tests: 
           - not_null
+          - negative_price_test
   - name: stg_order_item_refunds
     columns:
       - name: order_item_refund_id
@@ -70,6 +74,7 @@ models:
       - name: refund_amt_usd
         tests:
           - not_null
+          - negative_price_test
   - name: stg_products
     columns:
       - name: product_id
