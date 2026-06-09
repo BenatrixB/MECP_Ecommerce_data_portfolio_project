@@ -73,7 +73,8 @@ cohort_activity AS(
         cohort_month,
         order_month,
         months_since_first
-)
+),
+joined_df AS(
 SELECT
     ca.cohort_month,
     ca.subsequent_month,
@@ -91,3 +92,22 @@ ON ca.cohort_month = cs.cohort_month
 ORDER BY
     ca.cohort_month,
     ca.months_since_first
+),
+-- FINAL MODEL DATAFRAME
+final_df(
+    SELECT
+        cohort_month,
+        subsequent_month,
+        months_since_first,
+        cohort_size,
+        active_users,
+        retention_rate_pct,
+        monthly_revenue,
+        avg_revenue_per_user
+    FROM
+        joined_df
+)
+SELECT
+*
+FROM
+    final_df

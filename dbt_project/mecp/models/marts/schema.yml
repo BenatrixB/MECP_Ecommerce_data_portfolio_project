@@ -107,6 +107,7 @@ models:
       - name: acquisition_channel
       - name: acquisition_campaign
       - name: device_type
+        tests:
           - not_null
       - name: order_id
       - name: price_usd
@@ -119,4 +120,170 @@ models:
         tests:
           - not_null
       - name: session_month
+        tests:
           - not_null
+  - name: mart_users
+    columns: 
+      - name: user_id
+        tests:
+          - unique
+          - not_null
+      - name: first_session_date
+        tests:
+          - not_null
+          - future_date_test
+      - name: acquisition_channel
+      - name: acquisition_campaign
+      - name: acquisition_device
+      - name: first_order_date
+      - name: is_buyer
+        tests:
+          - not_null
+          - accepted_values: 
+              values: [0, 1]
+      - name: is_repeat_buyer
+        tests:
+          - not_null
+          - accepted_values: 
+              values: [0, 1]
+      - name: frequency
+        tests:
+          - not_null
+          - negative_price_test
+      - name: monetary
+        tests:
+          - not_null
+          - negative_price_test
+      - name: recency_days
+      - name: rfm_recency_score
+      - name: rfm_frequency_score
+      - name: rfm_monetary_score
+      - name: customer_segment
+        tests:
+          - not_null
+      - name: cohort_month
+      - name: ltv
+        tests:
+          - negative_price_test
+  - name: mart_funnel
+    columns:
+      - name: website_session_id
+        tests:
+          - not_null
+      - name: session_date
+        tests:
+          - not_null
+          - future_date_test
+      - name: device_type
+        tests:
+          - not_null
+      - name: acquisition_channel
+      - name: lander_variant
+        tests:
+          - not_null
+      - name: reached_landing
+        tests:
+          - not_null
+          - accepted_values:
+              values: [0, 1]
+      - name: reached_products
+        tests:
+          - not_null
+          - accepted_values: 
+              values: [0, 1]
+      - name: reached_product_page
+        tests:
+          - not_null
+          - accepted_values: 
+              values: [0, 1]
+      - name: reached_cart
+        tests:
+          - not_null
+          - accepted_values: 
+              values: [0, 1]
+      - name: reached_shipping
+        tests:
+          - not_null
+          - accepted_values: 
+              values: [0, 1]
+      - name: reached_billing
+        tests:
+          - not_null
+          - accepted_values: 
+              values: [0, 1]
+      - name: reached_thankyou
+        tests:
+          - not_null
+          - accepted_values: 
+              values: [0, 1]
+      - name: billing_variant
+      - name: is_conversion
+        tests:
+          - not_null
+          - accepted_values: 
+              values: [0, 1]
+      - name: session_year
+        tests:
+          - not_null
+      - name: session_month
+        tests:
+          - not_null
+  - name: mart_cohorts
+    tests:
+      - unique:
+          column_name: "cohort_month || '-' || subsequent_month"
+    columns:
+      - name: cohort_month
+        tests: 
+          - not_null
+      - name: subsequent_month
+        tests:
+          - not_null
+      - name: months_since_first
+        tests:
+          - not_null
+      - name: cohort_size
+        tests:
+          - not_null
+      - name: active_users
+        tests:
+          - not_null
+      - name: retention_rate_pct
+        tests:
+          - not_null
+      - name: monthly_revenue
+        tests:
+          - not_null
+          - negative_price_test
+      - name: avg_revenue_per_user
+        tests:
+          - not_null
+          - negative_price_test
+  - name: mart_ab_tests
+    columns: 
+      - name: website_session_id
+        tests:
+          - not_null
+      - name: created_at
+        tests:
+          - not_null
+          - future_date_test
+      - name: device_type
+        tests:
+          - not_null
+      - name: utm_source
+      - name: test_type
+      - name: variant
+      - name: is_conversion
+        tests:
+          - not_null
+          - accepted_values: 
+              values: [0, 1]
+      - name: revenue
+      - name: session_year
+        tests:
+          - not_null
+      - name: session_month
+        tests:
+          - not_null
+
