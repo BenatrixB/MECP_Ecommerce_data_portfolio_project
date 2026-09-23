@@ -17,7 +17,7 @@ def load_csv_to_raw(engine, table_name, file_path):
         logger.info(f"Loading {file_path} → raw.{table_name}")
         df = pd.read_csv(file_path)
         with engine.begin() as conn:
-            conn.execute(text(f"DROP TABLE IF EXISTS raw.{table_name}"))
+            conn.execute(text(f"DROP TABLE IF EXISTS raw.{table_name} CASCADE"))
         df.to_sql(
             name=table_name,
             con=engine,

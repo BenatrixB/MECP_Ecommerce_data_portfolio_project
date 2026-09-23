@@ -94,7 +94,7 @@ ORDER BY
     ca.months_since_first
 ),
 -- FINAL MODEL DATAFRAME
-final_df(
+final_df AS(
     SELECT
         cohort_month,
         subsequent_month,
