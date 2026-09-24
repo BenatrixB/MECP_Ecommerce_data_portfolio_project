@@ -3,3 +3,9 @@ target/
 dbt_packages/
 logs/
 .env
+airflow/logs/
+dbt_project/mecp/.user.yml
+docker-compose-airflow.yaml
+docker-compose.yml.bak
+dbt_project/mecp/target/
+dbt_project/mecp/logs/
