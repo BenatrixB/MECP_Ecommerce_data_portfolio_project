@@ -32,22 +32,50 @@ with DAG(
 
     dbt_staging = BashOperator(
     task_id='dbt_staging',
-    bash_command='cd /opt/airflow/dbt && /home/airflow/.local/bin/dbt run --select staging.*',
-    )
+    bash_command='cd /opt/airflow/dbt && /home/airflow/.local/bin/dbt run --select staging.* --target docker',
+    env={
+        'POSTGRES_HOST': 'mecp-postgres',
+        'POSTGRES_PORT': '5432',
+        'POSTGRES_DB': 'mecp_db',
+        'POSTGRES_USER': 'postgres',
+        'POSTGRES_PASSWORD': 'postgres',
+    }
+)
 
     dbt_intermediate = BashOperator(
     task_id='dbt_intermediate',
-    bash_command='cd /opt/airflow/dbt && /home/airflow/.local/bin/dbt run --select intermediate.*',
-    )
+    bash_command='cd /opt/airflow/dbt && /home/airflow/.local/bin/dbt run --select intermediate.* --target docker',
+    env={
+        'POSTGRES_HOST': 'mecp-postgres',
+        'POSTGRES_PORT': '5432',
+        'POSTGRES_DB': 'mecp_db',
+        'POSTGRES_USER': 'postgres',
+        'POSTGRES_PASSWORD': 'postgres',
+    }
+)
 
     dbt_marts = BashOperator(
     task_id='dbt_marts',
-    bash_command='cd /opt/airflow/dbt && /home/airflow/.local/bin/dbt run --select marts.*',
-    )
+    bash_command='cd /opt/airflow/dbt && /home/airflow/.local/bin/dbt run --select marts.* --target docker',
+    env={
+        'POSTGRES_HOST': 'mecp-postgres',
+        'POSTGRES_PORT': '5432',
+        'POSTGRES_DB': 'mecp_db',
+        'POSTGRES_USER': 'postgres',
+        'POSTGRES_PASSWORD': 'postgres',
+    }
+)
 
     dbt_test = BashOperator(
     task_id='dbt_test',
-    bash_command='cd /opt/airflow/dbt && /home/airflow/.local/bin/dbt test',
-    )
+    bash_command='cd /opt/airflow/dbt && /home/airflow/.local/bin/dbt test --target docker',
+    env={
+        'POSTGRES_HOST': 'mecp-postgres',
+        'POSTGRES_PORT': '5432',
+        'POSTGRES_DB': 'mecp_db',
+        'POSTGRES_USER': 'postgres',
+        'POSTGRES_PASSWORD': 'postgres',
+    }
+)
 
     ingestion >> dbt_staging >> dbt_intermediate >> dbt_marts >> dbt_test
