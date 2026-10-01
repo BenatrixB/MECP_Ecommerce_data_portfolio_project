@@ -1,39 +1,22 @@
-
-## Author
-
-Benas Baranovskis | Data Analyst/Analytics Engineer
-[LinkedIn](https://www.linkedin.com/in/bbaranovskis/)
-[GitHub](https://github.com/BenatrixB)
-
-
 # Maven Fuzzy Factory — E-commerce Analytics Pipeline
 
-A end-to-end analytics engineering portfolio project covering data ingestion, 
-transformation, modelling, and business intelligence for a fictional 
-e-commerce company.
+**Author:** Benas Baranovskis | Data Analyst / Analytics Engineer | [LinkedIn](your-linkedin) | [GitHub](https://github.com/BenatrixB)
 
-## Project Overview
-
-Maven Fuzzy Factory is a US-based direct-to-consumer e-commerce company 
-selling premium plush toys. This project analyses three years of transactional 
-and behavioural data (2012–2015) across ~1.73 million records to answer 
-10 key business questions spanning customer value, acquisition, conversion, 
-product performance, and growth trends.
+A end-to-end analytics engineering portfolio project covering data ingestion, transformation, modelling, and business intelligence for a fictional e-commerce company.
 
 ## Project Status
 
 | Phase | Status |
 |---|---|
 | I — Planning & EDA | ✅ Complete |
-| II — Ingestion & Docker setup | 🔄 In progress |
-| III — dbt modelling & testing | ⏳ Upcoming |
-| IV — Airflow orchestration | ⏳ Upcoming |
-| V — Dashboards & reporting | ⏳ Upcoming |
+| II — Ingestion & Docker setup | ✅ Complete |
+| III — dbt modelling & testing | ✅ Complete |
+| IV — Airflow orchestration | ✅ Complete |
+| V — Dashboards & reporting | 🔄 In progress |
 
-## Documentation
+## Project Overview
 
-Full project brief, data model diagrams, and architecture documentation 
-available in the `docs/` folder.
+Maven Fuzzy Factory is a US-based direct-to-consumer e-commerce company selling premium plush toys. This project analyses three years of transactional and behavioural data (2012–2015) across ~1.73 million records to answer 10 key business questions spanning customer value, acquisition, conversion, product performance, and growth trends.
 
 ## Tech Stack
 
@@ -42,7 +25,7 @@ available in the `docs/` folder.
 | Containerisation | Docker + docker-compose |
 | Storage | PostgreSQL |
 | Ingestion | Custom Python scripts |
-| Transformation | dbt |
+| Transformation | dbt Core |
 | Orchestration | Apache Airflow 3.x |
 | BI & Reporting | Power BI |
 
@@ -60,11 +43,18 @@ available in the `docs/` folder.
 └── .env.example             # Environment variable template
 ```
 
+## dbt Models
+
+| Layer | Models | Tests |
+|---|---|---|
+| Staging | 6 models | 43 tests |
+| Intermediate | 7 models | 57 tests |
+| Marts | 7 models | 97 tests |
+| **Total** | **20 models** | **157 tests** |
+
 ## Data
 
-Source data consists of six CSV files from the Maven Fuzzy Factory 
-transactional database. Due to file size, raw CSV files are not included 
-in this repository. Download the dataset from:
+Source data consists of six CSV files from the Maven Fuzzy Factory transactional database. Due to file size, raw CSV files are not included in this repository. Download the dataset from:
 
 [Maven Analytics Data Playground](https://mavenanalytics.io/data-playground/toy-store-e-commerce-database)
 
@@ -81,7 +71,7 @@ Place downloaded files in `data/raw/`.
 
 ## Business Questions
 
-**This project addresses 10 business questions across four domains:**
+This project addresses 10 business questions across four domains:
 
 **Customer intelligence**
 - BQ1: What is the value segmentation of our customer base? (RFM)
@@ -104,6 +94,41 @@ Place downloaded files in `data/raw/`.
 ## Getting Started
 
 ### Prerequisites
-- Docker Desktop installed
-- Python 3.9+
-- dbt Core installed
+- Docker Desktop
+- Python 3.12
+- Git
+
+### Setup
+
+1. Clone the repository
+```bash
+git clone https://github.com/BenatrixB/MECP_Ecommerce_data_portfolio_project.git
+cd MECP_Ecommerce_data_portfolio_project
+```
+
+2. Copy environment template
+```bash
+cp .env.example .env
+# Fill in your credentials
+```
+
+3. Start Docker environment
+```bash
+docker compose up -d
+```
+
+4. Download source data and place CSV files in `data/raw/`
+
+5. Run ingestion
+```bash
+python ingestion/ingest.py
+```
+
+6. Run dbt models
+```bash
+cd dbt_project/mecp
+dbt run
+dbt test
+```
+
+7. Access Airflow UI at `http://localhost:8080`
