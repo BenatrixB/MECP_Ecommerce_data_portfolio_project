@@ -2,288 +2,389 @@ version: 2
 
 models:
   - name: mart_orders
+    description: "One row per order. Contains revenue, COGS, gross margin, refund amounts and time dimensions per transaction. Use this model for revenue analysis, product financial performance and order trends."
     columns:
       - name: order_id
+        description: "Unique order identifier"
         tests:
           - unique
           - not_null
       - name: created_at
+        description: "Timestamp when the order was placed"
         tests:
           - not_null
           - future_date_test
       - name: user_id
+        description: "Unique customer identifier who placed the order"
         tests:
           - not_null
       - name: website_session_id
+        description: "Session ID during which the order was placed"
         tests:
           - not_null
       - name: primary_product_id
+        description: "ID of the primary product ordered (1=Mr. Fuzzy, 2=Love Bear, 3=Sugar Panda, 4=Mini Bear)"
         tests:
           - not_null
       - name: items_purchased
+        description: "Number of items in the order"
         tests:
           - not_null
       - name: price_usd
+        description: "Total order revenue in USD"
         tests:
           - not_null
           - negative_price_test
       - name: cogs_usd
+        description: "Cost of goods sold in USD"
         tests:
           - not_null
           - negative_price_test
       - name: gross_margin_usd
+        description: "Gross margin in USD = price_usd - cogs_usd"
         tests:
           - not_null
       - name: gross_margin_pct
+        description: "Gross margin percentage = gross_margin_usd / price_usd"
         tests:
           - not_null
       - name: refund_amt_usd
+        description: "Refund amount in USD if the order was refunded, NULL if no refund"
       - name: net_revenue_usd
+        description: "Net revenue after refunds = price_usd - refund_amt_usd"
         tests:
           - not_null
       - name: order_year
+        description: "Year the order was placed"
         tests:
           - not_null
       - name: order_month
+        description: "Month the order was placed (1-12)"
         tests:
           - not_null
       - name: order_day_of_week
+        description: "Day of week the order was placed (0=Sunday, 6=Saturday)"
         tests:
           - not_null
+
   - name: mart_products
+    description: "One row per product per month. Aggregated product performance including revenue, margin, units sold and refund metrics. Use this model for product comparison and monthly product trend analysis."
     tests:
       - unique:
           column_name: "product_id || '-' || order_year || '-' || order_month"
     columns:
       - name: product_id
+        description: "Product identifier (1=The Original Mr. Fuzzy, 2=The Forever Love Bear, 3=The Birthday Sugar Panda, 4=The Hudson River Mini Bear)"
         tests:
           - not_null
       - name: product_name
+        description: "Product display name"
         tests:
-          - not_null 
+          - not_null
       - name: order_year
+        description: "Year of the aggregation period"
         tests:
           - not_null
       - name: order_month
+        description: "Month of the aggregation period (1-12)"
         tests:
           - not_null
       - name: total_revenue
+        description: "Total gross revenue for this product in this month in USD"
         tests:
           - not_null
           - negative_price_test
       - name: total_cogs
+        description: "Total cost of goods sold for this product in this month in USD"
         tests:
           - not_null
           - negative_price_test
       - name: gross_margin_usd
+        description: "Gross margin in USD = total_revenue - total_cogs"
         tests:
           - not_null
       - name: gross_margin_pct
+        description: "Gross margin percentage = gross_margin_usd / total_revenue"
         tests:
           - not_null
       - name: units_sold
+        description: "Number of units sold for this product in this month"
       - name: total_refund_amt
+        description: "Total refund amount in USD for this product in this month"
       - name: refund_count
+        description: "Number of refunds for this product in this month"
       - name: refund_rate_pct
+        description: "Refund rate = refund_count / units_sold"
       - name: net_revenue
+        description: "Net revenue after refunds = total_revenue - total_refund_amt"
+
   - name: mart_sessions
+    description: "One row per website session. Contains acquisition channel, device type, conversion status and revenue per session. Use this model for traffic analysis, conversion rate by channel or device, and session-level metrics."
     columns:
       - name: session_id
+        description: "Unique session identifier"
         tests:
           - unique
           - not_null
       - name: created_at
+        description: "Timestamp when the session started"
         tests:
           - not_null
           - future_date_test
       - name: user_id
+        description: "User identifier for this session"
         tests:
           - not_null
       - name: is_repeat_session
+        description: "1 if this is a returning user's session, 0 if new user"
         tests:
           - not_null
           - accepted_values:
                 values: [0, 1]
       - name: acquisition_channel
+        description: "Traffic source / UTM source (e.g. gsearch, bsearch, socialbook, NULL for direct/organic)"
       - name: acquisition_campaign
+        description: "UTM campaign name"
       - name: device_type
+        description: "Device used in this session: desktop or mobile"
         tests:
           - not_null
       - name: order_id
+        description: "Order ID if a purchase was made in this session, NULL otherwise"
       - name: price_usd
+        description: "Revenue from order in this session in USD, NULL if no order"
       - name: is_conversion
+        description: "1 if an order was placed in this session, 0 otherwise"
         tests:
           - not_null
           - accepted_values:
               values: [0, 1]
       - name: session_year
+        description: "Year the session occurred"
         tests:
           - not_null
       - name: session_month
+        description: "Month the session occurred (1-12)"
         tests:
           - not_null
+
   - name: mart_users
-    columns: 
+    description: "One row per unique customer. Contains RFM segmentation, lifetime value, acquisition info and purchase behaviour. Use this model for customer segmentation, LTV analysis and retention metrics."
+    columns:
       - name: user_id
+        description: "Unique customer identifier"
         tests:
           - unique
           - not_null
       - name: first_session_date
+        description: "Date of the customer's first website session"
         tests:
           - not_null
           - future_date_test
       - name: acquisition_channel
+        description: "Channel through which the customer first arrived (gsearch, bsearch, socialbook, NULL for direct)"
       - name: acquisition_campaign
+        description: "Campaign through which the customer first arrived"
       - name: acquisition_device
+        description: "Device type used on first session: desktop or mobile"
       - name: first_order_date
+        description: "Date of the customer's first purchase, NULL if never purchased"
       - name: is_buyer
+        description: "1 if the customer has made at least one purchase, 0 otherwise"
         tests:
           - not_null
-          - accepted_values: 
+          - accepted_values:
               values: [0, 1]
       - name: is_repeat_buyer
+        description: "1 if the customer has made more than one purchase, 0 otherwise"
         tests:
           - not_null
-          - accepted_values: 
+          - accepted_values:
               values: [0, 1]
       - name: frequency
+        description: "Total number of orders placed by this customer (RFM frequency)"
         tests:
           - not_null
           - negative_price_test
       - name: monetary
+        description: "Total revenue generated by this customer in USD (RFM monetary)"
         tests:
           - not_null
           - negative_price_test
       - name: recency_days
+        description: "Number of days since the customer's last order"
       - name: rfm_recency_score
+        description: "RFM recency score (1-4, 4=most recent)"
       - name: rfm_frequency_score
+        description: "RFM frequency score (1-4, 4=most frequent)"
       - name: rfm_monetary_score
+        description: "RFM monetary score (1-4, 4=highest spend)"
       - name: customer_segment
+        description: "RFM-based segment: Champion, Loyal, Potential, At Risk, or Lost"
         tests:
           - not_null
       - name: cohort_month
+        description: "Month of customer's first purchase, used for cohort analysis"
       - name: ltv
+        description: "Customer lifetime value in USD = total revenue from this customer"
         tests:
           - negative_price_test
+
   - name: mart_funnel
+    description: "One row per website session with binary flags for each funnel stage reached. Use this model for conversion funnel analysis, drop-off rates between stages, and funnel performance by device or channel."
     columns:
       - name: website_session_id
+        description: "Unique session identifier"
         tests:
           - not_null
       - name: session_date
+        description: "Date the session occurred"
         tests:
           - not_null
           - future_date_test
       - name: device_type
+        description: "Device used: desktop or mobile"
         tests:
           - not_null
       - name: acquisition_channel
+        description: "Traffic source for this session"
       - name: lander_variant
-        tests:
-          - not_null
+        description: "First page URL visited in the session (e.g. /home, /lander-1 through /lander-5)"
       - name: reached_landing
+        description: "1 if session reached the landing page (/home or /lander-X), 0 otherwise"
         tests:
           - not_null
           - accepted_values:
               values: [0, 1]
       - name: reached_products
+        description: "1 if session reached the /products page, 0 otherwise"
         tests:
           - not_null
-          - accepted_values: 
+          - accepted_values:
               values: [0, 1]
       - name: reached_product_page
+        description: "1 if session reached an individual product page, 0 otherwise"
         tests:
           - not_null
-          - accepted_values: 
+          - accepted_values:
               values: [0, 1]
       - name: reached_cart
+        description: "1 if session reached the /cart page, 0 otherwise"
         tests:
           - not_null
-          - accepted_values: 
+          - accepted_values:
               values: [0, 1]
       - name: reached_shipping
+        description: "1 if session reached the /shipping page, 0 otherwise"
         tests:
           - not_null
-          - accepted_values: 
+          - accepted_values:
               values: [0, 1]
       - name: reached_billing
+        description: "1 if session reached /billing or /billing-2, 0 otherwise"
         tests:
           - not_null
-          - accepted_values: 
+          - accepted_values:
               values: [0, 1]
       - name: reached_thankyou
+        description: "1 if session reached /thank-you-for-your-order (completed purchase), 0 otherwise"
         tests:
           - not_null
-          - accepted_values: 
+          - accepted_values:
               values: [0, 1]
       - name: billing_variant
+        description: "1 if session used /billing-2 (redesigned billing page), 0 or NULL for original /billing"
       - name: is_conversion
+        description: "1 if an order was placed in this session, 0 otherwise"
         tests:
           - not_null
-          - accepted_values: 
+          - accepted_values:
               values: [0, 1]
       - name: session_year
+        description: "Year the session occurred"
         tests:
           - not_null
       - name: session_month
+        description: "Month the session occurred (1-12)"
         tests:
           - not_null
+
   - name: mart_cohorts
+    description: "One row per cohort month and subsequent month combination. Tracks how each monthly acquisition cohort retains and generates revenue over time. Use this model for cohort retention analysis and revenue per cohort."
     tests:
       - unique:
           column_name: "cohort_month || '-' || subsequent_month"
     columns:
       - name: cohort_month
-        tests: 
+        description: "Month of first purchase for this cohort (e.g. 2012-04)"
+        tests:
           - not_null
       - name: subsequent_month
+        description: "The calendar month being measured for this cohort"
         tests:
           - not_null
       - name: months_since_first
+        description: "Number of months since the cohort's first purchase (0=acquisition month)"
         tests:
           - not_null
       - name: cohort_size
+        description: "Number of customers in this cohort (acquired in cohort_month)"
         tests:
           - not_null
       - name: active_users
+        description: "Number of cohort customers who made a purchase in subsequent_month"
         tests:
           - not_null
       - name: retention_rate_pct
+        description: "Retention rate = active_users / cohort_size"
         tests:
           - not_null
       - name: monthly_revenue
+        description: "Total revenue from this cohort in subsequent_month in USD"
         tests:
           - not_null
           - negative_price_test
       - name: avg_revenue_per_user
+        description: "Average revenue per cohort member in subsequent_month = monthly_revenue / cohort_size"
         tests:
           - not_null
           - negative_price_test
+
   - name: mart_ab_tests
-    columns: 
+    description: "One row per website session per A/B test variant. Contains conversion and revenue outcomes per variant. Use this model for A/B test analysis, lander variant comparison and billing page experiment results."
+    columns:
       - name: website_session_id
+        description: "Unique session identifier"
         tests:
           - not_null
       - name: created_at
+        description: "Timestamp when the session started"
         tests:
           - not_null
           - future_date_test
       - name: device_type
+        description: "Device used: desktop or mobile"
         tests:
           - not_null
       - name: utm_source
+        description: "Traffic source for this session (gsearch, bsearch, socialbook, NULL for direct)"
       - name: test_type
+        description: "Type of A/B test: lander_test or billing_test"
       - name: variant
+        description: "The specific variant shown in this session (e.g. /lander-1, /lander-5, /billing, /billing-2)"
       - name: is_conversion
+        description: "1 if an order was placed in this session, 0 otherwise"
         tests:
           - not_null
-          - accepted_values: 
+          - accepted_values:
               values: [0, 1]
       - name: revenue
+        description: "Revenue in USD if order was placed, NULL otherwise"
       - name: session_year
+        description: "Year the session occurred"
         tests:
           - not_null
       - name: session_month
+        description: "Month the session occurred (1-12)"
         tests:
           - not_null
-
