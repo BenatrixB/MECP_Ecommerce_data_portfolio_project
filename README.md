@@ -1,8 +1,10 @@
-# Maven Fuzzy Factory — E-commerce Analytics Pipeline
+# Maven E-Commerce Project (MECP)
 
-**Author:** Benas Baranovskis | Data Analyst / Analytics Engineer | [LinkedIn](your-linkedin) | [GitHub](https://github.com/BenatrixB)
+**Author:** Benas Baranovskis | Data Analyst / Analytics Engineer | [LinkedIn](https://www.linkedin.com/in/bbaranovskis/) | [GitHub](https://github.com/BenatrixB)
 
-A end-to-end analytics engineering portfolio project covering data ingestion, transformation, modelling, and business intelligence for a fictional e-commerce company.
+An end-to-end analytics engineering portfolio project covering data ingestion, transformation, modelling, statistical analysis, and business intelligence for a fictional e-commerce company.
+
+---
 
 ## Project Status
 
@@ -12,11 +14,16 @@ A end-to-end analytics engineering portfolio project covering data ingestion, tr
 | II — Ingestion & Docker setup | ✅ Complete |
 | III — dbt modelling & testing | ✅ Complete |
 | IV — Airflow orchestration | ✅ Complete |
-| V — Dashboards & reporting | 🔄 In progress |
+| V — Dashboards & reporting | ✅ Complete |
+| VI — Statistical analysis & A/B testing | ✅ Complete |
+
+---
 
 ## Project Overview
 
 Maven Fuzzy Factory is a US-based direct-to-consumer e-commerce company selling premium plush toys. This project analyses three years of transactional and behavioural data (2012–2015) across ~1.73 million records to answer 10 key business questions spanning customer value, acquisition, conversion, product performance, and growth trends.
+
+---
 
 ## Tech Stack
 
@@ -28,6 +35,58 @@ Maven Fuzzy Factory is a US-based direct-to-consumer e-commerce company selling 
 | Transformation | dbt Core |
 | Orchestration | Apache Airflow 3.x |
 | BI & Reporting | Power BI |
+| Statistical Analysis | Python (scipy, statsmodels, pandas) |
+
+---
+
+## Key Findings
+
+**BQ9 — Is the business growing, and are there seasonal patterns?**
+- Revenue grew 174% YoY (2013→2014), driven by new product launches and channel expansion
+- Total revenue: $1.94M across 32K orders, AOV $59.99, overall conversion rate 6.83%
+
+**BQ4 — Which acquisition channels bring the highest quality traffic?**
+- Direct/organic (blank channel) converts at 7.34% — highest quality despite lower volume
+- Paid gsearch: 6.75%; Socialbook: 3.21% — brand awareness investment recommended to grow organic traffic
+
+**BQ5 — Is there a significant conversion gap between device types?**
+- Desktop converts at 8.5% vs mobile 3.09% — a 2.75x gap
+- Mobile accounts for 30.84% of sessions but significantly underperforms — mobile UX improvements recommended
+
+**BQ2 — Where in the conversion funnel do we lose the most customers?**
+- 93% of sessions never convert; funnel completion rate: 6.83%
+- Biggest drop-offs: Product page (44.76%) and Cart stage (63.65%)
+- Recommendation: improve product descriptions and implement cart abandonment email campaigns
+
+**BQ1 — What is the value segmentation of our customer base? (RFM)**
+- Only 8.4% of customers are Champions; 35.13% are At Risk of churning
+- Repeat buyer rate is just 1.86% — significant retention problem
+- Average LTV: $61.16; Socialbook drives highest LTV customers despite lowest volume
+
+**BQ3 — How well does the business retain customers over time?**
+- Most cohorts retain less than 20% of customers by Month 2
+- Average Month 1 retention: 0.84%; best retention cohort: 2014-04
+- Recommendation: post-purchase email sequences, loyalty programs, and personalised offers
+
+**BQ8 — What is the lifetime value of our customers by segment and channel?**
+- Champion segment LTV: $74; At Risk: $68; Potential: $50; Loyal: $41
+- LTV fairly consistent across acquisition channels (~$61–65) — channel quality matters more for conversion volume
+
+**BQ10 — Which website experiments improved conversion rates?**
+- /lander-5 converts 3x better than /lander-3 (10.17% vs 3.39%)
+- /billing-2 improved checkout completion by +18.57pp vs /billing (63.36% vs 44.79%), +41.5% relative lift
+- Chi-square test: χ² = 3,261, p ≈ 0; 9/10 pairwise comparisons significant after Bonferroni correction (α = 0.005)
+
+**BQ6 — Which products drive the most revenue and margin?**
+- The Original Mr. Fuzzy drives 62% of total revenue ($1.21M) with 22.6% gross margin
+- Newer products underperform — recommend focusing marketing spend on flagship product
+
+**BQ7 — What is the refund rate by product and its financial impact?**
+- Overall refund rate: 4.40%; total refunds: $85.34K
+- Birthday Sugar Panda has the highest refund rate (6.02%) — potential quality or expectation mismatch issue
+- Recommendation: investigate Sugar Panda quality issues while protecting Mr. Fuzzy's reputation
+
+---
 
 ## Project Structure
 
@@ -38,10 +97,12 @@ Maven Fuzzy Factory is a US-based direct-to-consumer e-commerce company selling 
 ├── dbt_project/             # dbt models (staging, intermediate, marts)
 ├── airflow/dags/            # Airflow DAG definitions
 ├── dashboards/              # Power BI dashboard files
-├── analysis/eda/            # Exploratory data analysis notebooks
+├── analysis/eda/            # Exploratory data analysis & statistical testing notebooks
 ├── docker-compose.yml       # Full environment setup
 └── .env.example             # Environment variable template
 ```
+
+---
 
 ## dbt Models
 
@@ -51,6 +112,21 @@ Maven Fuzzy Factory is a US-based direct-to-consumer e-commerce company selling 
 | Intermediate | 7 models | 57 tests |
 | Marts | 7 models | 97 tests |
 | **Total** | **20 models** | **157 tests** |
+
+---
+
+## Statistical Analysis
+
+Full hypothesis testing pipeline in [`analysis/eda/ab_test_statistical_analysis.ipynb`](analysis/eda/ab_test_statistical_analysis.ipynb):
+
+- **Chi-square test of independence** — overall significance across lander variants
+- **Bonferroni-corrected pairwise z-tests** — all 10 variant pairs with adjusted α = 0.005
+- **Wilson 95% confidence intervals** — precision estimates per variant
+- **Sample size & power analysis** — minimum detectable effect and post-hoc power
+- **Billing page head-to-head z-test** — two-proportion test with effect size quantification
+- **Forest plot visualisation** — CI comparison across all variants
+
+---
 
 ## Data
 
@@ -68,6 +144,8 @@ Place downloaded files in `data/raw/`.
 | order_items.csv | ~40k | Order line items per product |
 | order_item_refunds.csv | ~1.7k | Refund records |
 | products.csv | 4 | Product catalogue |
+
+---
 
 ## Business Questions
 
@@ -90,6 +168,8 @@ This project addresses 10 business questions across four domains:
 - BQ6: Which products drive the most revenue and margin?
 - BQ7: What is the refund rate by product and its financial impact?
 - BQ9: Is the business growing, and are there seasonal patterns?
+
+---
 
 ## Getting Started
 
