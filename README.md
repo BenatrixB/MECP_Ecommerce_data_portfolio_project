@@ -2,7 +2,7 @@
 
 **Author:** Benas Baranovskis | Data Analyst / Analytics Engineer | [LinkedIn](https://www.linkedin.com/in/bbaranovskis/) | [GitHub](https://github.com/BenatrixB)
 
-An end-to-end analytics engineering portfolio project covering data ingestion, transformation, modelling, statistical analysis, and business intelligence for a fictional e-commerce company.
+An end-to-end analytics engineering portfolio project covering data ingestion, transformation, modelling, statistical analysis, business intelligence, and natural language querying for a fictional e-commerce company.
 
 ---
 
@@ -16,6 +16,7 @@ An end-to-end analytics engineering portfolio project covering data ingestion, t
 | IV — Airflow orchestration | ✅ Complete |
 | V — Dashboards & reporting | ✅ Complete |
 | VI — Statistical analysis & A/B testing | ✅ Complete |
+| VII — Natural language querying (Text-to-SQL) | ✅ Complete |
 
 ---
 
@@ -36,6 +37,7 @@ Maven Fuzzy Factory is a US-based direct-to-consumer e-commerce company selling 
 | Orchestration | Apache Airflow 3.x |
 | BI & Reporting | Power BI |
 | Statistical Analysis | Python (scipy, statsmodels, pandas) |
+| Natural Language Querying | Ollama + Llama 3.2 (local LLM) |
 
 ---
 
@@ -99,6 +101,7 @@ Maven Fuzzy Factory is a US-based direct-to-consumer e-commerce company selling 
 ├── dashboards/              # Power BI dashboard files
 ├── analysis/eda/            # Exploratory data analysis & statistical testing notebooks
 ├── docker-compose.yml       # Full environment setup
+├── text_to_sql.py           # Natural language to SQL query engine
 └── .env.example             # Environment variable template
 ```
 
@@ -125,6 +128,67 @@ Full hypothesis testing pipeline in [`analysis/eda/ab_test_statistical_analysis.
 - **Sample size & power analysis** — minimum detectable effect and post-hoc power
 - **Billing page head-to-head z-test** — two-proportion test with effect size quantification
 - **Forest plot visualisation** — CI comparison across all variants
+
+---
+
+## Text-to-SQL (Natural Language Querying)
+
+Ask business questions in plain English and get SQL results instantly — no SQL knowledge required.
+
+### How it works
+
+1. `text_to_sql.py` reads `dbt_project/mecp/models/marts/schema.yml` — all 7 mart models with column descriptions
+2. Builds a schema context string and sends it to a locally running **Llama 3.2** model via Ollama
+3. Llama generates a PostgreSQL query from the natural language question
+4. The query is executed against the MECP PostgreSQL database and results are printed
+
+Everything runs **100% locally** — no cloud API, no data leaves your machine.
+
+### Usage
+
+```bash
+# Interactive mode
+DB_PORT=5433 DB_NAME=mecp_db DB_USER=postgres DB_PASSWORD=postgres python text_to_sql.py
+
+# Single question
+DB_PORT=5433 DB_NAME=mecp_db DB_USER=postgres DB_PASSWORD=postgres \
+  python text_to_sql.py --question "What is the total revenue by year?"
+
+# Generate SQL without executing (dry run)
+python text_to_sql.py --dry-run
+```
+
+### Example questions
+
+```
+What are the top 5 customers by lifetime value?
+What is the total revenue by product?
+What is the conversion rate by acquisition channel?
+Which customer segment has the highest average LTV?
+What is the monthly revenue trend for 2014?
+What is the refund rate by product?
+How many sessions converted in each device type?
+```
+
+### Example output
+
+```
+Question: What are the top 5 customers by lifetime value?
+
+── SQL ──
+SELECT user_id, ltv FROM marts.mart_users ORDER BY ltv DESC LIMIT 5;
+
+── Results ──
+user_id  ltv
+-------  ------
+341972   251.94
+324814   245.95
+172266   237.95
+275098   235.95
+142410   219.96
+
+(5 rows)
+```
 
 ---
 
@@ -177,6 +241,7 @@ This project addresses 10 business questions across four domains:
 - Docker Desktop
 - Python 3.12
 - Git
+- [Ollama](https://ollama.com/download) (for natural language querying)
 
 ### Setup
 
@@ -212,3 +277,16 @@ dbt test
 ```
 
 7. Access Airflow UI at `http://localhost:8080`
+
+8. Install Ollama and pull Llama 3.2 (for Text-to-SQL)
+
+   Download and install Ollama from [https://ollama.com/download](https://ollama.com/download), then pull the model:
+   ```bash
+   ollama pull llama3.2
+   ```
+   Requires ~2GB disk space. Runs locally — no API key or internet connection needed after download.
+
+9. Install Python dependencies for Text-to-SQL
+```bash
+pip install psycopg2-binary pyyaml
+```
